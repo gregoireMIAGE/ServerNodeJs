@@ -58,4 +58,4 @@ server.use(function(req, res, next){
 });
 
 server.listen(server_port);
-console.log("Demarage du serveur sur le port "+server_port+ " a l'adresse : "+server_ip_address);
+console.log("Demarage du serveur sur le port "+server_port);
