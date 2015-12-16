@@ -3,9 +3,9 @@ var express = require('express');
 var bodyParser = require("body-parser");
 var url = require('url');
 
-var router = require("./node-modules/routeur");
+var router = require("./modules/routeur");
 
-var requestHandlers = require("./node-modules/requestHandlers");
+var requestHandlers = require("./modules/requestHandlers");
 
 var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
 var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
