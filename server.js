@@ -1,14 +1,14 @@
 // dépendance api express
 var express = require('express');
-//var bodyParser = require("body-parser");
+var bodyParser = require('body-parser');
 var url = require('url');
 
 var router = require("./modules/routeur");
 
 var requestHandlers = require("./modules/requestHandlers");
 
-//var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
-var server_ip_address = process.env.PORT || 5000;
+var server_port = process.env.PORT || 5000;
+//var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
 var handle = {};
 
@@ -20,7 +20,13 @@ handle["/:value/getdata"] = requestHandlers.getdata;
 
 // serveur html
 var server= express();
-//server.use(bodyParser.urlencoded({ extended: true }));
+
+server.use(bodyParser.urlencoded({ extended: true }));
+server.use(bodyParser.urlencoded());
+server.use(bodyParser.json());
+server.use(bodyParser.urlencoded({
+  extended: true
+}));
 
 server.get('/', function(request, response) {
     var pathname = url.parse(request.url).pathname;
@@ -57,5 +63,5 @@ server.use(function(req, res, next){
     res.send(404, 'Page introuvable !');
 });
 
-server.listen(server_port, server_ip_address);
-console.log("Demarage du serveur sur le port "+server_port+ " a l'adresse : "+server_ip_address);
+server.listen(server_port);
+console.log("Demarage du serveur sur le port "+server_port);

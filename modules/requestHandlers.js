@@ -3,7 +3,7 @@ var querystring = require('querystring');
 
 function start(request, response) {
     console.log("Le gestionnaire 'start' est appelé.");
-    
+
      var body = '<html>'+
     '<head>'+
     '<meta http-equiv="Content-Type" content="text/html; '+
@@ -17,7 +17,7 @@ function start(request, response) {
     '</form>'+
     '</body>'+
     '</html>';
-    
+
     response.writeHead(200, {"Content-Type": "text/html"});
     response.end(body);
 }
@@ -29,18 +29,20 @@ function racine(request, response){
 }
 function postdata(request, response){
     console.log("Le gestionnaire 'postdata' est appelé.");
-    
+
     var message = afficheMessage(request.body);
-    
+
+    //console.log("parametre value : "+request.body.value1);
+
     response.setHeader('Content-Type', 'text/html');
     response.status(200).send('<h1>Text value methode post : value = '+message+'</h1>');
     response.end();
 }
 function getdata(request, response){
     console.log("Le gestionnaire 'getdata' est appelé.");
-    
+
     var message = afficheMessage(request.params);
-    
+
     response.setHeader('Content-Type', 'text/html');
     response.status(200).send('<h1>Text value methode get : value = '+message+'</h1>');
     response.end();
