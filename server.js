@@ -7,7 +7,8 @@ var router = require("./modules/routeur");
 
 var requestHandlers = require("./modules/requestHandlers");
 
-var server_port = process.env.PORT || 5000;
+var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080
+var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
 //var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
 var handle = {};
@@ -16,6 +17,9 @@ handle["/"] = requestHandlers.racine;
 handle["/start"] = requestHandlers.start;
 handle["/postdata"] = requestHandlers.postdata;
 handle["/:value/getdata"] = requestHandlers.getdata;
+handle["/getpackagejson"] = requestHandlers.getPackageJSON;
+handle["/testjson"] = requestHandlers.testJSON;
+handle["erreur"] = requestHandlers.erreur;
 
 
 // serveur html
@@ -29,39 +33,60 @@ server.use(bodyParser.urlencoded({
 }));
 
 server.get('/', function(request, response) {
-    var pathname = url.parse(request.url).pathname;
+    var pathname = getUrl(request);
 
     //envoie de la requete au route pour traitement
     router.route(handle,pathname,request,response);
 
 });
 server.get('/start', function(request, response) {
-    var pathname = url.parse(request.url).pathname;
+    var pathname = getUrl(request);
     //envoie de la requete au route pour traitement
     router.route(handle,pathname,request,response);
 
 });
 //apelle de la page get.html
-server.get('/:value/getdata', function(request, response) {
-    var pathname = url.parse(request.url).pathname;
+server.get("/:value/getdata", function(request, response) {
+    var pathname = getUrl(request);
 
     //envoie de la requete au route pour traitement
     router.route(handle,'/:value/getdata',request,response);
 
 });
 
-server.post('/postdata', function(request, response) {
-    var pathname = url.parse(request.url).pathname;
+server.get('/getpackagejson', function(request, response) {
+    var pathname = getUrl(request);
 
     //envoie de la requete au route pour traitement
     router.route(handle,pathname,request,response);
 
 });
 
-server.use(function(req, res, next){
-    res.setHeader('Content-Type', 'text/plain');
-    res.send(404, 'Page introuvable !');
+server.get('/testjson', function(request, response) {
+    var pathname = getUrl(request);
+
+    //envoie de la requete au route pour traitement
+    router.route(handle,pathname,request,response);
+
 });
 
-server.listen(server_port);
-console.log("Demarage du serveur sur le port "+server_port);
+server.post('/postdata', function(request, response) {
+    var pathname = getUrl(request);
+
+    //envoie de la requete au route pour traitement
+    router.route(handle,pathname,request,response);
+
+});
+
+server.use(function(request, response, next){
+    var pathname = getUrl(request);
+
+    router.route(handle,pathname,request,response);
+});
+
+function getUrl(request){
+  return decodeURI(url.parse(request.url).pathname);
+}
+
+server.listen(server_port, server_ip_address);
+console.log("Listening on " + server_ip_address + ", server_port " + server_port);

@@ -1,6 +1,18 @@
 var url = require('url');
 var querystring = require('querystring');
+var fs = require('fs');
 
+function erreur(request, response){
+  console.log("Le gestionnaire 'erreur' est appelé.");
+
+  console.log("Liste message post");
+  var messagePost = afficheMessage(request.body);
+  console.log("Liste message get");
+  var messageGet = afficheMessage(request.params);
+
+  response.setHeader('Content-Type', 'text/plain');
+  response.send(404, 'Page introuvable !');
+}
 function start(request, response) {
     console.log("Le gestionnaire 'start' est appelé.");
 
@@ -47,14 +59,53 @@ function getdata(request, response){
     response.status(200).send('<h1>Text value methode get : value = '+message+'</h1>');
     response.end();
 }
+function getPackageJSON(request, response){
+    console.log("Le gestionnaire 'getPackageJSON' est appelé.");
+    response.setHeader('Content-Type', 'application/json');
 
+    console.log("retour JSON : "+getJSONFile('package.json'));
+
+    response.status(200).send(getJSONFile('package.json'));
+    response.end();
+}
+  function testJSON(request, response){
+
+    console.log("Le gestionnaire 'testJSON' est appelé.");
+    response.setHeader('Content-Type', 'application/json');
+
+    var objJson = {
+      "objJson1" : {
+        nom : "parant",
+        prenom : "gregoire",
+        age : "45",
+        mail : "parant.gregoire@gmail.com"
+      },
+      "objJson2" : {
+        nom : "parant",
+        prenom : "thomas",
+        age : "35",
+        mail : ["parant.thomas@gmail.com","thomas57710@gmail.com"]
+      }
+    };
+
+    console.log("retour JSON : "+JSON.stringify(objJson));
+
+    response.status(200).send(JSON.stringify(objJson));
+    response.end();
+    //response.status(200).send(JSON.parse(fs.readFileSync('/../package.json', 'utf8')));
+    //response.end();
+}
+
+function getJSONFile(file){
+  return JSON.parse(fs.readFileSync(file, 'utf8'));
+}
 function afficheMessage(objet){
     //recuperation de la liste des message
     //formatage du message
     var i = 0;var message ="";
     for (var paramPostData in objet){
         i++;
-        console.log("parametre "+i+" : " + objet[paramPostData]);
+        console.log("{ param_"+i+" : " + objet[paramPostData]+" } ");
         if(message==="")
             message = message + objet[paramPostData];
         else
@@ -63,7 +114,10 @@ function afficheMessage(objet){
     return message;
 }
 
+exports.erreur = erreur;
 exports.start = start;
 exports.racine = racine;
 exports.postdata = postdata;
 exports.getdata = getdata;
+exports.getPackageJSON = getPackageJSON;
+exports.testJSON = testJSON;
